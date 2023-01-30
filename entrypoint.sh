@@ -316,7 +316,7 @@ EOF
 
 setOutput "outputcommit" "$commit"
 setOutput "outputauthor" "$author_name"
-
+setOutput "outputdate" "$dt"
 
 git_ref_posted=$( echo "${git_refs_response}" | jq .ref | tr -d '"' )
 
