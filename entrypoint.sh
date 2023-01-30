@@ -313,10 +313,11 @@ curl -s -X POST "$git_refs_url" \
 EOF
 )
 
+format_date=$(echo $dt | cut -d'T' -f1)
 
 setOutput "outputcommit" "$commit"
 setOutput "outputauthor" "$author_name"
-setOutput "outputdate" "$dt"
+setOutput "outputdate" "$format_date"
 
 git_ref_posted=$( echo "${git_refs_response}" | jq .ref | tr -d '"' )
 
