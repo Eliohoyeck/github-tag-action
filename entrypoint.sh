@@ -50,15 +50,15 @@ echo -e "\tNONE_STRING_TOKEN: ${none_string_token}"
 echo -e "\tBRANCH_HISTORY: ${branch_history}"
 
 
-    splitDir=$(echo $dir | cut -d "/" -f 4)
-    echo $splitDir        
-    pre+=$splitDir
-    pre+="-"
 # Check for changes in submodule
-pre=""
+
 for dir in terraform/modules/*/**; do
   if [[ -n $(git diff HEAD~1 -- $dir) ]]; then
     echo "Changes detected in submodule: $dir"
+    splitDir=$(echo $dir | cut -d "/" -f 4)
+    echo $splitDir        
+    tag_prefix=$splitDir
+    
     # verbose, show everything
     if $verbose
     then
@@ -254,7 +254,7 @@ for dir in terraform/modules/*/**; do
             fi
             echo -e "Bumping ${suffix} pre-tag ${pre_tag}. New pre-tag ${new}"
         else
-            if [-n $tag_prefix ]
+            if [ -n $tag_prefix ]
             then
                 new="$tag_prefix$new-$suffix.0"
             else
@@ -319,7 +319,7 @@ for dir in terraform/modules/*/**; do
       "ref": "refs/tags/$new",
       "sha": "$commit"
     }
-    EOF
+EOF
     )
 
     format_date=$(echo $dt | cut -d'T' -f1)
@@ -355,12 +355,10 @@ for dir in terraform/modules/*/**; do
         exit 1
     fi
   fi
+git config --local user.email "action@github.com"
+git config --local user.name "GitHub Action Bot"  
+git add modules-versions.md
+git commit -m "Append outputs to modules-versions.md"
+git push
+
 done
-echo prefix=$pre >> $GITHUB_OUTPUT
-echo "this is the new value for pre: $pre"
-
-
-
-
-
-
