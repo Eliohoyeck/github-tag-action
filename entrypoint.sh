@@ -55,7 +55,9 @@ echo -e "\tBRANCH_HISTORY: ${branch_history}"
 for dir in $modules_path; do
   if [[ -n $(git diff HEAD~1 -- $dir) ]]; then
     echo "Changes detected in submodule: $dir"
-    splitDir=$(echo $dir | cut -d "/" -f 4)
+    field_num=$(echo "$dir" | tr -cd "/" | wc -c)
+    field_num=$((field_num + 1))
+    splitDir=$(echo $dir | cut -d "/" -f $field_num)
     echo $splitDir
     tag_prefix=$splitDir-
     
