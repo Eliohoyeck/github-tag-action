@@ -51,15 +51,12 @@ echo -e "\tBRANCH_HISTORY: ${branch_history}"
 
 
 # Check for changes in submodule
-pre=""
 for dir in terraform/modules/*/**; do
   if [[ -n $(git diff HEAD~1 -- $dir) ]]; then
     echo "Changes detected in submodule: $dir"
     splitDir=$(echo $dir | cut -d "/" -f 4)
     echo $splitDir
-    pre+=$splitDir
-    pre+="-"
-    tag_prefix=$pre
+    tag_prefix=$splitDir-
     
     # verbose, show everything
     if $verbose
