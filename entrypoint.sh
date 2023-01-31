@@ -8,6 +8,7 @@ set -o pipefail
 default_semvar_bump=${DEFAULT_BUMP:-minor}
 default_branch=${DEFAULT_BRANCH:-$GITHUB_BASE_REF} # get the default branch from github runner env vars
 tag_prefix=${TAG_PREFIX:-}
+modules_path=${MODULES_PATH:-}
 release_branches=${RELEASE_BRANCHES:-master,main}
 custom_tag=${CUSTOM_TAG:-}
 source=${SOURCE:-.}
@@ -33,7 +34,7 @@ echo "*** CONFIGURATION ***"
 echo -e "\tDEFAULT_BUMP: ${default_semvar_bump}"
 echo -e "\tDEFAULT_BRANCH: ${default_branch}"
 echo -e "\tTAG_PREFIX: ${tag_prefix}"
-echo -e "\tTAG_PREFIX: ${tag_prefix}elio${default_semvar_bump}"
+echo -e "\tMODULES_PATH: ${modules_path}"
 echo -e "\tRELEASE_BRANCHES: ${release_branches}"
 echo -e "\tCUSTOM_TAG: ${custom_tag}"
 echo -e "\tSOURCE: ${source}"
@@ -51,7 +52,7 @@ echo -e "\tBRANCH_HISTORY: ${branch_history}"
 
 
 # Check for changes in submodule
-for dir in terraform/modules/*/**; do
+for dir in modules_path; do
   if [[ -n $(git diff HEAD~1 -- $dir) ]]; then
     echo "Changes detected in submodule: $dir"
     splitDir=$(echo $dir | cut -d "/" -f 4)
