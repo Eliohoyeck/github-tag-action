@@ -341,6 +341,7 @@ EOF
     then
         #exit 0
         # check if bump version worked if so then create markdown file or append
+        > temp.md # clear contents of temp.md
         printf "\n" >> temp.md
         echo -e "-------------------------------------------------------------" >> temp.md
         printf "\n" >> temp.md
@@ -348,6 +349,7 @@ EOF
         printf "\n" >> temp.md
         cat temp.md modules-versions.md > mynewfile.md
         mv mynewfile.md modules-versions.md
+        
         
         
     else
