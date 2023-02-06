@@ -58,7 +58,7 @@ for dir in $modules_path; do
     field_num=$(echo "$dir" | tr -cd "/" | wc -c)
     field_num=$((field_num + 1))
     splitDir=$(echo $dir | cut -d "/" -f $field_num)
-    echo $splitDir
+    echo "This is the detected module:$splitDir"
     tag_prefix=$splitDir-
     
     # verbose, show everything
@@ -99,9 +99,9 @@ for dir in $modules_path; do
 
     tagFmt="^$tag_prefix[0-9]+\.[0-9]+\.[0-9]+$"
     preTagFmt="^$tag_prefix[0-9]+\.[0-9]+\.[0-9]+(-$suffix\.[0-9]+)$"
-    echo $tagFmt
-    echo $preTagFmt
-    echo "endshere, start for sort and format"
+    echo "this is the current tag check: $tagFmt"
+    echo "this is the current pre-tag check: $preTagFmt"
+    echo "start for the sorting and formatting"
 
 
     # get latest tag that looks like a semver (with or without tag_prefix)
@@ -110,22 +110,18 @@ for dir in $modules_path; do
             tag="$(git for-each-ref --sort=-v:refname refs/tags/${tag_prefix}* --format '%(refname:lstrip=2)' | grep -E "$tagFmt" | head -n 1)"
             pre_tag="$(git for-each-ref --sort=-v:refname refs/tags/${tag_prefix}* --format '%(refname:lstrip=2)' | grep -E "$preTagFmt" | head -n 1)"
             a="$(git for-each-ref --sort=-v:refname refs/tags/$tag_prefix* --format '%(refname:lstrip=2)')"
-            echo $a
+            echo "this/these are the related tag(s): $a"
             b="$(git for-each-ref --sort=-v:refname refs/tags/${tag_prefix}* --format '%(refname:lstrip=2)' | grep -E "$tagFmt")"
-            echo $b
-            echo $tag
+            echo "this is the latest tag: $tag"
             echo "the above are for the tag"
             c="$(git for-each-ref --sort=-v:refname refs/tags/${tag_prefix}* --format '%(refname:lstrip=2)')"
-            echo $c
+            echo "this is for the pre-tag: $c"
             d="$(git for-each-ref --sort=-v:refname refs/tags/${tag_prefix}* --format '%(refname:lstrip=2)' | grep -E "$preTagFmt")"
-            echo $d
-            echo $pre_tag
+            echo "this is for the latest pretag: $pre_tag"
             ;;
         *branch*)
             tag="$(git tag --list --merged HEAD --sort=-v:refname | grep -E "$tagFmt" | head -n 1)"
             pre_tag="$(git tag --list --merged HEAD --sort=-v:refname | grep -E "$preTagFmt" | head -n 1)"
-            echo "eliohelo"
-            echo "honeakaltalbranch"
             ;;
         * ) echo "Unrecognised context"
             exit 1;;
@@ -161,7 +157,6 @@ for dir in $modules_path; do
 
     # get current commit hash for tag
     tag_commit=$(git rev-list -n 1 "$tag")
-    echo "the previous tags exist"
     echo "this is the tag_commit: $tag_commit"
     # get current commit hash
     commit=$(git rev-parse HEAD)
