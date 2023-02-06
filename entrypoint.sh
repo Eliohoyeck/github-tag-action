@@ -134,7 +134,7 @@ for dir in $modules_path; do
         if [ -n $tag_prefix ]
         then
             tag="$tag_prefix$initial_version"
-            echo "if tag prefix is not empty"
+            echo "if tag tag is not found then initial version is the below"
             echo "initial_version: $initial_version"
             echo "testing the tag here: $tag"
         else
