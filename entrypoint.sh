@@ -311,14 +311,17 @@ for dir in $modules_path; do
 
     # Get the commit details
     commit_url="https://api.github.com/repos/$full_name/commits/$pr_sha"
+    echo "commit_url: $commit_url"
     commit_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$commit_url")
-
+    echo "commit_reponse: $commit_response"
     # Extract the pull request number
     pull_request_number=$(echo "$commit_response" | jq -r '.parents[0].pull_request.number')
-
+    echo "pull_request_number: $pull_request_number"
     # Get the pull request details
     pull_request_url="https://api.github.com/repos/$full_name/pulls/$pull_request_number"
+    echo "pull_request_url: $pull_request_url"
     pull_request_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$pull_request_url")
+    echo "pull_request_response: $pull_resquest_response"
 
     # Extract the pull request title and body
     pull_request_title=$(echo "$pull_request_response" | jq -r '.title')
