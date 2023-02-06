@@ -309,11 +309,8 @@ for dir in $modules_path; do
     author_name=$(git show $commit | grep Author | cut -d '<' -f 1)
     echo "author name:$author_name"
 
-    # Find the repository name and owner
-    full_name=$(jq -r '.repository.full_name' "$GITHUB_EVENT_PATH")
-
     # Get the commit details
-    commit_url="https://api.github.com/repos/$full_name/commits/$pr_sha
+    commit_url="https://api.github.com/repos/$full_name/commits/$pr_sha"
     commit_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$commit_url")
 
     # Extract the pull request number
