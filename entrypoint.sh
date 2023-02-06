@@ -306,7 +306,7 @@ for dir in $modules_path; do
     author_name=$(git show $commit | grep Author | cut -d '<' -f 1)
     echo "author name:$author_name"
 
-    commit_url="https://api.github.com/$full_name/commits/$commit"
+    commit_url="https://api.github.com/repos/$full_name/commits/$commit"
     commit_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$commit_url")
     
     echo "commit_url: $commit_url"
