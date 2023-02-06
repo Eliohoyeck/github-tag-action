@@ -23,7 +23,7 @@ minor_string_token=${MINOR_STRING_TOKEN:-#minor}
 patch_string_token=${PATCH_STRING_TOKEN:-#patch}
 none_string_token=${NONE_STRING_TOKEN:-#none}
 branch_history=${BRANCH_HISTORY:-last}
-state=${STATE:-open}
+state=${STATE:-closed}
 pr_sha=${PR_SHA:=${{ github.event.pull_request.head.sha || github.sha }}}
 # since https://github.blog/2022-04-12-git-security-vulnerability-announced/ runner uses?
 git config --global --add safe.directory /github/workspace
