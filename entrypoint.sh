@@ -306,17 +306,15 @@ for dir in $modules_path; do
     author_name=$(git show $commit | grep Author | cut -d '<' -f 1)
     echo "author name:$author_name"
 
-    # Retrieve information about pull request associated with commit
-    pull_request_url="https://api.github.com/repos/$full_name/pulls?head=$full_name:$new"
-    pull_request_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$pull_request_url")
-    echo "pull request url is $pull_resquest_url"
-    echo "pull request response is $pull_resquest_response"
+    commit_url="https://api.github.com/repos/$full_name/commits/$commit"
+    commit_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$commit_url")
+    
+    echo "commit_url: $commit_url"
+    echo "commit_response: $commit_response"
+    
     # Extract the pull request number and URL
-    pull_request_number=$(echo "$pull_request_response" | jq .[0].number)
-    pull_request_html_url=$(echo "$pull_request_response" | jq .[0].html_url | tr -d '"')
-
+    pull_request_number=$(echo "$commit_response" | jq .pull_request.number)
     echo "pull request number: $pull_request_number"
-    echo "pull request URL: $pull_request_html_url"
 
     git_refs_response=$(
     curl -s -X POST "$git_refs_url" \
