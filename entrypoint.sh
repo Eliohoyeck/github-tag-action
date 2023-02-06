@@ -23,6 +23,8 @@ minor_string_token=${MINOR_STRING_TOKEN:-#minor}
 patch_string_token=${PATCH_STRING_TOKEN:-#patch}
 none_string_token=${NONE_STRING_TOKEN:-#none}
 branch_history=${BRANCH_HISTORY:-last}
+state=${STATE:-open}
+pr_sha=${PR_SHA:=${{ github.event.pull_request.head.sha || github.sha }}}
 # since https://github.blog/2022-04-12-git-security-vulnerability-announced/ runner uses?
 git config --global --add safe.directory /github/workspace
 
@@ -49,7 +51,8 @@ echo -e "\tMINOR_STRING_TOKEN: ${minor_string_token}"
 echo -e "\tPATCH_STRING_TOKEN: ${patch_string_token}"
 echo -e "\tNONE_STRING_TOKEN: ${none_string_token}"
 echo -e "\tBRANCH_HISTORY: ${branch_history}"
-
+echo -e "\tSTATE: ${state}"
+echo -e "\tPR_SHA: ${pr_sha}"
 
 # Check for changes in submodule
 for dir in $modules_path; do
@@ -306,26 +309,29 @@ for dir in $modules_path; do
     author_name=$(git show $commit | grep Author | cut -d '<' -f 1)
     echo "author name:$author_name"
 
-    commit_url="https://api.github.com/repos/$full_name/commits/$commit"
+    # Find the repository name and owner
+    full_name=$(jq -r '.repository.full_name' "$GITHUB_EVENT_PATH")
+
+    # Get the commit details
+    commit_url="https://api.github.com/repos/$full_name/commits/$pr_sha
     commit_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$commit_url")
-    echo "This is the commit response: $commit_response"
-    
-    if [ "$(echo "$commit_response" | jq -r .pull_request.url)" != "null" ]; then   
-      # Extract the URL of the pull request
-      pull_request_url=$(echo "$commit_response" | jq -r .pull_request.url)
-      echo "Extract the URL of the pull request: $pull_request_url"
-      
-      # Make another API call to get the details of the pull request
-      pull_request_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$pull_request_url")
-      echo "Make another API call to get the details of the pull request: $pull_request_response"
-      
-      # Extract the pull request number from the API response
-      pull_request_number=$(echo "$pull_request_response" | jq -r .number)
-      
-    else
-      pull_request_number="null"
-      echo "pull request number is null"
-    fi
+
+    # Extract the pull request number
+    pull_request_number=$(echo "$commit_response" | jq -r '.parents[0].pull_request.number')
+
+    # Get the pull request details
+    pull_request_url="https://api.github.com/repos/$full_name/pulls/$pull_request_number"
+    pull_request_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$pull_request_url")
+
+    # Extract the pull request title and body
+    pull_request_title=$(echo "$pull_request_response" | jq -r '.title')
+    pull_request_body=$(echo "$pull_request_response" | jq -r '.body')
+
+    # Print the outputs
+    echo "pr: $pull_request_number"
+    echo "number: $pull_request_number"
+    echo "title: $pull_request_title"
+    echo "body: $pull_request_body"
 
     git_refs_response=$(
     curl -s -X POST "$git_refs_url" \
@@ -366,9 +372,7 @@ EOF
         printf "\n" >> temp.md
         cat temp.md modules-versions.md > mynewfile.md
         mv mynewfile.md modules-versions.md
-        
-        
-        
+
     else
         echo "::error::Tag was not created properly."
         exit 1
@@ -382,3 +386,4 @@ git config --local user.name "GitHub Action Bot"
 git add modules-versions.md
 git commit -m "Append outputs to modules-versions.md"
 git push
+
