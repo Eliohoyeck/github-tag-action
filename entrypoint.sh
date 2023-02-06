@@ -309,12 +309,22 @@ for dir in $modules_path; do
     commit_url="https://api.github.com/repos/$full_name/commits/$commit"
     commit_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$commit_url")
     
-    echo "commit_url: $commit_url"
-    echo "commit_response: $commit_response"
-    
-    # Extract the pull request number and URL
-    pull_request_number=$(echo "$commit_response" | jq .pull_request.number)
-    echo "pull request number: $pull_request_number"
+    if [ "$(echo "$commit_response" | jq -r .pull_request.url)" != "null" ]; then   
+      # Extract the URL of the pull request
+      pull_request_url=$(echo "$commit_response" | jq -r .pull_request.url)
+      echo "Extract the URL of the pull request: $pull_request_url"
+      
+      # Make another API call to get the details of the pull request
+      pull_request_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$pull_request_url")
+      echo "Make another API call to get the details of the pull request: $pull_request_response"
+      
+      # Extract the pull request number from the API response
+      pull_request_number=$(echo "$pull_request_response" | jq -r .number)
+      
+    else
+      pull_request_number="null"
+      echo "pull request number is null"
+    fi
 
     git_refs_response=$(
     curl -s -X POST "$git_refs_url" \
