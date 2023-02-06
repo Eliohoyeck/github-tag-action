@@ -308,6 +308,7 @@ for dir in $modules_path; do
 
     commit_url="https://api.github.com/repos/$full_name/commits/$commit"
     commit_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$commit_url")
+    echo "This is the commit response: $commit_response"
     
     if [ "$(echo "$commit_response" | jq -r .pull_request.url)" != "null" ]; then   
       # Extract the URL of the pull request
