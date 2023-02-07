@@ -3,8 +3,6 @@
 
 set -o pipefail
 
-PR_SHA=${github.event.pull_request.head.sha}
-
 # config
 default_semvar_bump=${DEFAULT_BUMP:-minor}
 default_branch=${DEFAULT_BRANCH:-$GITHUB_BASE_REF} # get the default branch from github runner env vars
@@ -24,8 +22,6 @@ minor_string_token=${MINOR_STRING_TOKEN:-#minor}
 patch_string_token=${PATCH_STRING_TOKEN:-#patch}
 none_string_token=${NONE_STRING_TOKEN:-#none}
 branch_history=${BRANCH_HISTORY:-last}
-state=${STATE:-closed}
-pr_sha=${PR_SHA:=${{ github.sha }}}
 # since https://github.blog/2022-04-12-git-security-vulnerability-announced/ runner uses?
 git config --global --add safe.directory /github/workspace
 
@@ -309,30 +305,27 @@ for dir in $modules_path; do
 
     author_name=$(git show $commit | grep Author | cut -d '<' -f 1)
     echo "author name:$author_name"
+   
 
-    # Get the commit details
-    commit_url="https://api.github.com/repos/$full_name/commits/$pr_sha"
-    echo "commit_url: $commit_url"
-    commit_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$commit_url")
-    echo "commit_reponse: $commit_response"
-    # Extract the pull request number
-    pull_request_number=$(echo "$commit_response" | jq -r '.parents[0].pull_request.number')
-    echo "pull_request_number: $pull_request_number"
-    # Get the pull request details
-    pull_request_url="https://api.github.com/repos/$full_name/pulls/$pull_request_number"
-    echo "pull_request_url: $pull_request_url"
-    pull_request_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$pull_request_url")
-    echo "pull_request_response: $pull_resquest_response"
+    # Retrieve the pull request number
+    pr_number=$(jq -r '.pull_request.number' "$GITHUB_EVENT_PATH")
+    echo "pr number: $pr_number"
+    # Build the pull request URL
+    pr_url="https://api.github.com/repos/$full_name/pulls/$pr_number"
+    echo "pr url: $pr_url"
+    # Make the API call to retrieve the pull request information
+    pr_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$pr_url")
+    echo "pr response: $pr_response"
+    # Extract the pull request information from the response
+    pr_link=$(echo "$pr_response" | jq -r '.html_url')
+    pr_title=$(echo "$pr_response" | jq -r '.title')
+    pr_body=$(echo "$pr_response" | jq -r '.body')
 
-    # Extract the pull request title and body
-    pull_request_title=$(echo "$pull_request_response" | jq -r '.title')
-    pull_request_body=$(echo "$pull_request_response" | jq -r '.body')
-
-    # Print the outputs
-    echo "pr: $pull_request_number"
-    echo "number: $pull_request_number"
-    echo "title: $pull_request_title"
-    echo "body: $pull_request_body"
+    # Print the pull request information
+    echo "Number: $pr_number"
+    echo "Link: $pr_link"
+    echo "Title: $pr_title"
+    echo "Body: $pr_body"
 
     git_refs_response=$(
     curl -s -X POST "$git_refs_url" \
