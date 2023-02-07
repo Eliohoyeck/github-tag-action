@@ -308,6 +308,7 @@ for dir in $modules_path; do
    
 
     # Retrieve the pull request number
+    echo "this is the github event path: $GITHUB_EVENT_PATH"
     pr_number=$(jq -r '.pull_request.number' "$GITHUB_EVENT_PATH")
     echo "pr number: $pr_number"
     # Build the pull request URL
