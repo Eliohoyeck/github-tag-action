@@ -308,25 +308,25 @@ for dir in $modules_path; do
    
 
     # Retrieve the pull request number
-    echo "this is the github event path: $GITHUB_EVENT_PATH"
-    pr_number=$(jq -r '.pull_request.number' "$GITHUB_EVENT_PATH")
-    echo "pr number: $pr_number"
+    #echo "this is the github event path: $GITHUB_EVENT_PATH"
+    #pr_number=$(jq -r '.pull_request.number' "$GITHUB_EVENT_PATH")
+    #echo "pr number: $pr_number"
     # Build the pull request URL
-    pr_url="https://api.github.com/repos/$full_name/pulls/$pr_number"
-    echo "pr url: $pr_url"
+    #pr_url="https://api.github.com/repos/$full_name/pulls/$pr_number"
+    #echo "pr url: $pr_url"
     # Make the API call to retrieve the pull request information
-    pr_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$pr_url")
-    echo "pr response: $pr_response"
+    #pr_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$pr_url")
+    #echo "pr response: $pr_response"
     # Extract the pull request information from the response
-    pr_link=$(echo "$pr_response" | jq -r '.html_url')
-    pr_title=$(echo "$pr_response" | jq -r '.title')
-    pr_body=$(echo "$pr_response" | jq -r '.body')
+    #pr_link=$(echo "$pr_response" | jq -r '.html_url')
+    #pr_title=$(echo "$pr_response" | jq -r '.title')
+    #pr_body=$(echo "$pr_response" | jq -r '.body')
 
     # Print the pull request information
-    echo "Number: $pr_number"
-    echo "Link: $pr_link"
-    echo "Title: $pr_title"
-    echo "Body: $pr_body"
+    #echo "Number: $pr_number"
+    #echo "Link: $pr_link"
+    #echo "Title: $pr_title"
+    #echo "Body: $pr_body"
 
     git_refs_response=$(
     curl -s -X POST "$git_refs_url" \
