@@ -363,7 +363,7 @@ EOF
         printf "\n" >> temp.md
         echo -e "-------------------------------------------------------------" >> temp.md
         printf "\n" >> temp.md
-        printf -- "$author_name <br></br>\n [commit](https://github.com/Eliohoyeck/terraform-aws-privatemodule/commit/$commit)\t $format_date <br></br>\n $new <br></br>\n" >> temp.md
+        printf -- "$author_name <br></br>\n [commit](https://github.com/$GITHUB_REPOSITORY/commit/$commit)\t $format_date <br></br>\n $new <br></br>\n" >> temp.md
         printf "\n" >> temp.md
         cat temp.md modules-versions.md > mynewfile.md
         mv mynewfile.md modules-versions.md
