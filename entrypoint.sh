@@ -59,7 +59,8 @@ for dir in $modules_path; do
     field_num=$((field_num + 1))
     splitDir=$(echo $dir | cut -d "/" -f $field_num)
     echo "This is the detected module:$splitDir"
-    tag_prefix=$splitDir-
+    module_prefix=$(echo $dir | cut -d "/" -f $(($field_num - 1)))
+    tag_prefix=$module_prefix-$splitDir-
     
     # verbose, show everything
     if $verbose
