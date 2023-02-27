@@ -376,9 +376,9 @@ EOF
   fi
 
 done
-
-git config --local user.email "action@github.com"
-git config --local user.name "GitHub Action Bot"  
+"${GITHUB_ACTOR}"
+git config --local user.email "${GITHUB_ACTOR}"
+git config --local user.name "${GITHUB_ACTOR}@users.noreply.github.com"  
 git add modules-versions.md
 git commit -m "Append outputs to modules-versions.md"
 git push
