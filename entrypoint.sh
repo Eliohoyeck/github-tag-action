@@ -377,9 +377,9 @@ EOF
 
 done
 
-git config --local user.name "github-actions"
-git config --local user.email "github-actions@github.com"
-git add modules-versions.md
-git commit -m "Append outputs to modules-versions.md"
-git push
+#git config --local user.name "github-actions"
+#git config --local user.email "github-actions@github.com"
+#git add modules-versions.md
+#git commit -m "Append outputs to modules-versions.md"
+#git push
 
