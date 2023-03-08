@@ -376,11 +376,10 @@ EOF
   fi
 
 done
-"${GITHUB_ACTOR}"
+
 git config --local user.name "${GITHUB_ACTOR}"
 git config --local user.email "${GITHUB_ACTOR}@users.noreply.github.com"  
 git add modules-versions.md
 git commit -m "Append outputs to modules-versions.md"
-git push https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git HEAD:main
-
+git push
 
